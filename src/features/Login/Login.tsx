@@ -1,11 +1,12 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { Profile } from '../../models/Profile';
 import axios from 'axios';
 import { MY_SERVER_LOGIN, MY_SERVER_PROFILE1 } from '../../env';
 import { addProfileAsync } from '../Profile/profileSlice1';
 import handleAuth from '../Login/Auth';
+import { StatusContext } from './Status';
 
 
 
@@ -24,12 +25,15 @@ export const Login = () => {
     const [remember, setRemember] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    const { status, setStatus } = useContext(StatusContext);
+
+
     const [errorm, setErrorMsg] = useState("");
-      
 
 
 
-    const handleLogin = async (username: string, password: string, remember:boolean) => {
+
+    const handleLogin = async (username: string, password: string, remember: boolean) => {
         try {
             const response = await axios.post(MY_SERVER_LOGIN, {
                 username,
@@ -37,13 +41,13 @@ export const Login = () => {
             });
 
             console.log(response.data.user_id);
-            console.log(response.data);
+            // console.log(response.data);
             const accessToken = response.data.access;
             const refreshToken = response.data.refresh;
             sessionStorage.setItem('accessToken', accessToken);
             if (remember) {
                 localStorage.setItem('refreshToken', refreshToken);
-              }
+            }
             const userResponse = await axios.get(MY_SERVER_PROFILE1, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -53,9 +57,13 @@ export const Login = () => {
             const staff = userResponse.data.is_staff;
 
             sessionStorage.setItem('userId', profile);
-            console.log(profile);
+            // console.log(profile);
             sessionStorage.setItem('staff', staff);
             console.log(staff);
+            setStatus('loggedIn');
+            setPassword('')
+            setUserName('')
+  
 
 
             console.log('Login successful!');
@@ -68,10 +76,13 @@ export const Login = () => {
     };//roti - 123
 
     const handleLogout = () => {
-          sessionStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          console.log('Logged out successfully');
-        };
+        sessionStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        console.log('Logged out successfully');
+        setStatus(null)
+        setPassword('')
+        setUserName('')
+    };
 
 
     const handleUnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,36 +117,38 @@ export const Login = () => {
     const handleTogglePassword = (): void => {
         setShowPassword(!showPassword);
     }
-    
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const profileData: Profile = {
-          username,
-          password,
-          profile: {
-            name,
-            email,
-            is_staff,
-            items
-          }
+            username,
+            password,
+            profile: {
+                name,
+                email,
+                is_staff,
+                items
+            }
         };
         const action = await dispatch(addProfileAsync(profileData));
         if (addProfileAsync.fulfilled.match(action)) {
-          // If submission was successful, get the profile, access token, and refresh token
-          const { profile, accessToken, refreshToken } = action.payload;
-          // Call handleLogin with the username and password from the new profile
-          handleLogin(username, password,remember);
+            // If submission was successful, get the profile, access token, and refresh token
+            const { profile, accessToken, refreshToken } = action.payload;
+            // Call handleLogin with the username and password from the new profile
+            handleLogin(username, password, remember);
         } else {
-          // If submission failed, handle the error
-          console.error('Profile creation error:', action.error);
+            // If submission failed, handle the error
+            console.error('Profile creation error:', action.error);
         }
-      };
+    };
 
 
 
     return (
         <div style={{ display: 'flex' }}>
 
+            <div>
+                <h2>Register</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>
@@ -168,12 +181,6 @@ export const Login = () => {
                     </label>
                 </div>
                 <div>
-                    {/* <label>
-                        Items:
-                        <input type="text" value={items.join(',')} onChange={handleItemChange} />
-                    </label> */}
-                </div>
-                <div>
                     <label>
                         Staff:
                         <input
@@ -189,24 +196,58 @@ export const Login = () => {
                         Remeber Me:
                         <input type="checkbox" onChange={handleRememberChange} />
                     </label>
-                </div>
-
-                <br></br>
+                    <br></br>
                 <br></br>
 
                 <button type="submit">Submit</button>
+
+                </div>
+                </form>
+
+
+
+
                 <br></br>
                 <br></br>
-                <button onClick={() => handleLogin(username, password,remember)}>Login</button>
+                <div>
+                    <h2>Login/Logout</h2>
+                    <div>
+                    <label>
+                        Username:
+                        <input type="text" value={username} onChange={handleUnameChange} required />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Password:
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={handlePassChange}
+                            required
+                        />
+                    </label>
+                    <button onClick={handleTogglePassword}>{showPassword ? "Hide" : "Show"}</button>
+                </div>
+                <div>
+                    <label>
+                        Remeber Me:
+                        <input type="checkbox" onChange={handleRememberChange} />
+                    </label>
+                </div>
+                <br></br>
+                {status === null &&<button onClick={() => handleLogin(username, password,remember)}>Login</button>}
+                </div>
                 <br></br>
                 <br></br>
-                <button onClick={handleLogout}>Logout</button>
+                {status !== null &&<button onClick={handleLogout}>Logout</button>}
                 <br></br>
                 <br></br>
                 <button onClick={handleAuth}>Check</button>
-            </form>
 
-        </div>
+            </div >
+
+        </div >
 
     )
 }

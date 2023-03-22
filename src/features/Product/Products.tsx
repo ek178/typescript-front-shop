@@ -1,14 +1,18 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import defaultImage from '../../app/static/lion-fish.jpg';
 import { MY_SERVER } from '../../env';
 import { getProductAsync, selectProducts, addProductAsync, delProductAsync, updProductAsync } from './prodSlice';
 import { Product } from '../../models/Product';
+import { getSingleAsync1, selectSingle } from '../Single/singleSlice';
+import { StatusContext } from '../Login/Status';
 
 
 export const Product1 = () => {
     const products = useAppSelector(selectProducts);
+
+    const profile1 = useAppSelector(selectSingle);
     const dispatch = useAppDispatch();
 
     const [p_name, setName] = useState("");
@@ -17,6 +21,10 @@ export const Product1 = () => {
     const [p_price, setPrice] = useState(0.0);
     const [p_type, setType] = useState(1);
     const [p_amount, setAmount] = useState(0);
+    // const [status, setStatus] = useState<string | null>(null);
+    const { status, setStatus } = useContext(StatusContext);
+
+
     const [errorm, setErrorMsg] = useState("");
 
 
@@ -24,6 +32,19 @@ export const Product1 = () => {
     useEffect(() => {
         dispatch(getProductAsync());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (status !== null) {
+            dispatch(getSingleAsync1());
+        }
+        else {
+            dispatch(getSingleAsync1());
+
+        }
+    }, [dispatch, status]);
+
+
+
 
     const getImageUrl = (p_image: string | File | null) => {
         if (!p_image) {
@@ -131,61 +152,86 @@ export const Product1 = () => {
                         Name: {pro?.p_name}
                         <br></br>
                         image: <img src={getImageUrl(pro?.p_image)} alt={pro?.p_name} width="200" height="200" />
-                        <button onClick={() => dispatch(delProductAsync(pro.id || -1))}>
-                            Del
-                        </button>
-                        <form onSubmit={handleUp(pro)}>
-                            <button type='submit'>Update
-                            </button>
-                        </form>
+                        <br></br>
+                        <div>
+                            {status !== null && profile1?.is_staff ? (
+                                <button onClick={() => dispatch(delProductAsync(pro.id || -1))}>
+                                    Del
+                                </button>
+                            ) : (status !== null &&
+                                <div>
+                                    Only Staff Can Delete
+                                </div>
+                            )}
+                        </div>
+                        <br></br>
+                        <div>
+                            {status !== null && profile1?.is_staff ? (
+                                <form onSubmit={handleUp(pro)}>
+                                    <button type='submit'>Update</button>
+                                </form>
+                            ) : (
+                                status !== null && <div>Only Staff Can Update</div>
+                            )}
+                        </div>
+
                     </div>
                 ))}
             </div>
             <br></br>
+            <div>
+                {status !== null && profile1?.is_staff ? (
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <label>
+                                Name:
+                                <input type="text" value={p_name} onChange={handleNameChange} required />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Description:
+                                <textarea value={p_desc} onChange={handleDescChange} />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Price:
+                                <input type="number" value={p_price} onChange={handlePriceChange} required />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Type:
+                                <input type="number" value={p_type} onChange={handleTypeChange} required />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Amount:
+                                <input type="number" value={p_amount} onChange={handleAmountChange} required />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Image:
+                                <input type="file" accept="image/*" onChange={handleImageChange} />
+                                {/* <img src={defaultImage} alt="department_image" width="200" height="200" /> */}
+                            </label>
+                        </div>
+                        <br></br>
+                        <br></br>
 
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>
-                        Name:
-                        <input type="text" value={p_name} onChange={handleNameChange} required />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Description:
-                        <textarea value={p_desc} onChange={handleDescChange} />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Price:
-                        <input type="number" value={p_price} onChange={handlePriceChange} required />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Type:
-                        <input type="number" value={p_type} onChange={handleTypeChange} required />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Amount:
-                        <input type="number" value={p_amount} onChange={handleAmountChange} required />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Image:
-                        <input type="file" accept="image/*" onChange={handleImageChange} />
-                        {/* <img src={defaultImage} alt="department_image" width="200" height="200" /> */}
-                    </label>
-                </div>
-                <br></br>
-                <br></br>
+                        <button type="submit">Submit</button>
+                    </form>
+                ) : (status !== null &&
+                    <div>
+                        Only Staff Can Upload
+                    </div>
+                )}
 
-                <button type="submit">Submit</button>
-            </form>
+            </div>
+
         </div>
 
     );

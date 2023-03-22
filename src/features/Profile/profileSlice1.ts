@@ -2,8 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { Profile,ProfileGet } from '../../models/Profile';
 import { getProfile1,addProfile1,delProfile1,updProfile1 } from './profileAPI1';
-import { MY_SERVER_LOGIN } from '../../env';
-import axios from 'axios';
+
 
 
 
@@ -32,6 +31,7 @@ export const getProfileAsync = createAsyncThunk(
 export const addProfileAsync = createAsyncThunk(
     'profile/addProfile1',
     async (profileData: Profile) => {
+      console.log(1)
       const response = await addProfile1(profileData);
       return response.data;
     }
