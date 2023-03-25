@@ -11,11 +11,11 @@ import singleSlice, { SingleSlice11 } from '../features/Single/singleSlice';
 
 export const store = configureStore({
   reducer: {
-    department: DepartmentSlice,
+    departments: DepartmentSlice,
     profile: ProfileSlice1.reducer,
-    product: ProductSlice.reducer,
+    products: ProductSlice.reducer,
     delivery: DeliverySlice.reducer,
-    order: OrderSlice.reducer,
+    orders: OrderSlice.reducer,
     review: ReviewSlice.reducer,
     profile1: SingleSlice11.reducer
   },

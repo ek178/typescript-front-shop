@@ -1,16 +1,24 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import { Product } from '../../models/Product';
-import { getProduct,addProduct,delProduct,updProduct } from './productAPI';
+import { getProduct,addProduct,delProduct,updProduct, get1Product } from './productAPI';
 
 
 export interface ProductState {
   products: Product[]
+  product: Product | null
+
+
 }
 
 const initialState: ProductState = {
-  products: []
+  products: [],
+  product: null
 };
+
+
+
+
 
 export const getProductAsync = createAsyncThunk(
   'product/getProduct',
@@ -51,6 +59,14 @@ export const updProductAsync = createAsyncThunk(
 //   }
 // );
 
+export const get1ProductAsync = createAsyncThunk(
+  'product/get1Product',
+  async (id: number) => {
+    const response = await get1Product(id);
+    return response;
+  }
+);
+
 
 export const ProductSlice = createSlice({
   name: 'product',
@@ -76,10 +92,25 @@ export const ProductSlice = createSlice({
       if (index >= 0) {
         state.products[index] = updatedProduct;
       }
-    });
+    }).addCase(get1ProductAsync.fulfilled, (state, action) => {
+      // Append or replace the fetched product
+      const productIndex = state.products.findIndex((p) => p.id === action.payload.id);
+      if (productIndex !== -1) {
+        state.products[productIndex] = action.payload;
+      } else {
+        state.products.push(action.payload);
+      }
+    })
 
   },
 });
+
+
+export const selectProducts = (state: RootState) => state.products.products;
+export const selectProductById = (state: RootState, id: number | null) =>
+  id ? state.products.products.find((product) => product.id === id) : null;
+
+export default ProductSlice.reducer;
 
 // let temp = state.products.filter(x => x.id === action.payload.id)[0]
 // temp.p_name = action.payload.p_name
@@ -89,7 +120,3 @@ export const ProductSlice = createSlice({
 // temp.p_name = action.payload.p_name
 // temp.p_desc = action.payload.p_desc
 // });
-
-export const selectProducts = (state: RootState) => state.product.products;
-
-export default ProductSlice.reducer;

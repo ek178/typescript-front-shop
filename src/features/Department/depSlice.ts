@@ -1,15 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import { Department } from '../../models/Department';
-import { getDepartment, delDepartment, addDepartment, updDepartment } from './depAPI';
+import { getDepartment, delDepartment, addDepartment, updDepartment, get1Department } from './depAPI';
 
 
 export interface DepartmentState {
   departments: Department[]
+  department: Department | null
 }
 
 const initialState: DepartmentState = {
-  departments: []
+  departments: [],
+  department: null
 };
 
 export const getDepartmentsAsync = createAsyncThunk(
@@ -61,6 +63,16 @@ export const updDepartmentAsync = createAsyncThunk(
 // );
 
 
+export const get1DepartmentAsync = createAsyncThunk(
+  'department/get1Department',
+  async (id: number) => {
+    const response = await get1Department(id);
+    return response;
+  }
+);
+
+
+
 export const DepartmentSlice = createSlice({
   name: 'department',
   initialState,
@@ -85,21 +97,25 @@ export const DepartmentSlice = createSlice({
       if (index >= 0) {
         state.departments[index] = updatedDeprtment;
       }
+    }).addCase(get1DepartmentAsync.fulfilled, (state, action) => {
+      // Append or replace the fetched product
+      const productIndex = state.departments.findIndex((p) => p.id === action.payload.id);
+      if (productIndex !== -1) {
+        state.departments[productIndex] = action.payload;
+      } else {
+        state.departments.push(action.payload);
+      }
     });
   },
 });
 
 
-export const selectDepartments = (state: RootState) => state.department.departments;
+export const selectDepartments = (state: RootState) => state.departments.departments;
+export const selectDepartmentById = (state: RootState, id: number | null) =>
+  id ? state.departments.departments.find((department) => department.id === id) : null;
 
 export default DepartmentSlice.reducer;
 
-// addCase(updDepartmentAsync.fulfilled, (state, action) => {
-//   console.log(action.payload)
-//   let temp = state.departments.filter(x => x.id === action.payload.id)[0]
-//   temp.d_name = action.payload.d_name
-//   temp.d_desc = action.payload.d_desc
-//   temp.d_image = action.payload.d_image
-// });
+
 
 

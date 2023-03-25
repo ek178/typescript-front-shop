@@ -7,7 +7,9 @@ import { getProductAsync, selectProducts, addProductAsync, delProductAsync, updP
 import { Product } from '../../models/Product';
 import { getSingleAsync1, selectSingle } from '../Single/singleSlice';
 import { StatusContext } from '../Login/Status';
+import { Link } from 'react-router-dom';
 
+// const filteredProducts = allProducts.filter(product => product.type === 'desiredType');
 
 export const Product1 = () => {
     const products = useAppSelector(selectProducts);
@@ -23,7 +25,6 @@ export const Product1 = () => {
     const [p_amount, setAmount] = useState(0);
     // const [status, setStatus] = useState<string | null>(null);
     const { status, setStatus } = useContext(StatusContext);
-
 
     const [errorm, setErrorMsg] = useState("");
 
@@ -147,12 +148,13 @@ export const Product1 = () => {
                 <h1>Products in my class: {products.length}</h1>
                 {products && products.map((pro, i) => (
                     <div key={i}>
-                        ID: {pro?.id},
+                        ID: {pro?.id}, 
                         <br></br>
                         Name: {pro?.p_name}
                         <br></br>
                         image: <img src={getImageUrl(pro?.p_image)} alt={pro?.p_name} width="200" height="200" />
                         <br></br>
+                        <Link to={`/products/${pro?.id}`}>View details</Link>
                         <div>
                             {status !== null && profile1?.is_staff ? (
                                 <button onClick={() => dispatch(delProductAsync(pro.id || -1))}>

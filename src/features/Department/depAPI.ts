@@ -8,6 +8,11 @@ export async function  getDepartment () {
     return await axios.get(MY_SERVER_DEPARTMENT).then(res => res.data );
 }
 
+export async function get1Department(id: number) {
+  const url = `${MY_SERVER_DEPARTMENT}${id}/`;
+  return await axios.get(url).then(res => res.data);
+}
+
 // export async function addDepartment(formData: FormData) {
 //   return handleAuth(async () => {
 //     const response = await axios.post(MY_SERVER_DEPARTMENT, formData, {

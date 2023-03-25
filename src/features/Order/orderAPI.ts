@@ -2,9 +2,12 @@ import axios from 'axios'
 import { MY_SERVER_ORDER } from '../../env';
 
 
-
 export async function  getOrder () {
-    return await axios.get(MY_SERVER_ORDER).then(res => res.data );
+  return await axios.get(MY_SERVER_ORDER).then(res => res.data );
+}
+
+export async function  get1Order (access: string) {
+    return await axios.get(MY_SERVER_ORDER, {headers:{Authorization: `Bearer ${access}`}}).then(res => res.data );
 }
 
 

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { MY_SERVER_PRODUCT } from '../../env';
-import { Product } from '../../models/Product';
 
 
 
@@ -8,6 +7,10 @@ export async function  getProduct () {
     return await axios.get(MY_SERVER_PRODUCT).then(res => res.data );
 }
 
+export async function get1Product(id: number) {
+  const url = `${MY_SERVER_PRODUCT}${id}/`;
+  return await axios.get(url).then(res => res.data);
+}
 
 // export async function  addProduct (formData: FormData) {
 //     return await axios.post(MY_SERVER_PRODUCT,formData);

@@ -5,6 +5,7 @@ import { addDepartmentAsync, delDepartmentAsync, getDepartmentsAsync, selectDepa
 import defaultImage from '../../app/static/lion-fish.jpg';
 import { MY_SERVER } from '../../env';
 import { Department } from '../../models/Department';
+import { Link } from 'react-router-dom';
 
 
 
@@ -117,6 +118,8 @@ export const Department1 = () => {
                         ID: {dep.id}, Name: {dep.d_name}
                         image: <img src={getImageUrl(dep.d_image)} alt={dep.d_name} width="200" height="200" />
                         <br></br>
+                        <Link to={`/departments/${dep?.id}`}>View details</Link>
+
 
                         <div>
                             {is_staff ? (
