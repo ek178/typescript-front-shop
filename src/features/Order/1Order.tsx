@@ -20,7 +20,7 @@ const UserOrder = () => {
     const { status, setStatus } = useContext(StatusContext);
 
     const [errorm, setErrorMsg] = useState("");
-    
+
     useEffect(() => {
         dispatch(get1OrderAsync(accessToken as string)).then((result) => {
             console.log("get1OrderAsync.fulfilled: ", result.payload);
@@ -41,32 +41,44 @@ const UserOrder = () => {
     return (
         <div>
             <h2>{order?.length}</h2>
-            <div>
-                <h1>Orders in my class: {order.length}</h1>
-                {order && order.map((ord, i) => (
-                    <div key={i}>
-                        ID: {ord?.id},
-                        <br></br>
-                        Products: {ord?.product_ids.map((id) => id).join(", ")}
-                        <br></br>
-                        Buyer: {ord?.buyer_id}
-                        <br></br>
-                        Delivery: {ord?.delivery_details_id}
-                        {/* <button onClick={() => dispatch(delOrderAsync(ord.id || -1))}>
-                            Del
-                        </button> */}
-                        {/* <form onSubmit={handleUp(ord)}>
-                            <button type='submit'>Update
-                            </button>
-                        </form> */}
-                    </div>
-                ))}
-            </div>
+            {order && order.map((ord, i) => (
+                ord.total_price
+            ))}
+
 
         </div>
     )
-
 }
+
+// return (
+//     <div>
+//         <h2>{order?.length}</h2>
+//         <div>
+//             <h1>Orders in my class: {order.length}</h1>
+//             {order && order.map((ord, i) => (
+//                 <div key={i}>
+//                     ID: {ord?.id},
+//                     <br></br>
+//                     Products: {ord?.product_ids.map((id) => id).join(", ")}
+//                     <br></br>
+//                     Buyer: {ord?.buyer_id}
+//                     <br></br>
+//                     Delivery: {ord?.delivery_details_id}
+//                     {/* <button onClick={() => dispatch(delOrderAsync(ord.id || -1))}>
+//                         Del
+//                     </button> */}
+//                     {/* <form onSubmit={handleUp(ord)}>
+//                         <button type='submit'>Update
+//                         </button>
+//                     </form> */}
+//                 </div>
+//             ))}
+//         </div>
+
+//     </div>
+// )
+
+
 
 
 export default UserOrder;

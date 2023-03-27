@@ -16,6 +16,7 @@ import { Login } from './features/Login/Login';
 import { Home1 } from './features/Home1/Home';
 import SingleProduct from './features/Product/1Product';
 import SingleDepartment from './features/Department/1Department';
+import UserOrder from './features/Order/1Order';
 
 
 
@@ -36,7 +37,9 @@ root.render(
     <Route path="/products/:id" element={<SingleProduct />} />
     <Route path="/products" element={<Product1 />} />
     <Route path="/deliveries" element={<Delivery1 />} />
-    <Route path="/orders" element={<Order1 />} />
+    {/* <Route path="/orders" element={<Order1 />} /> */}
+    <Route path="/orders" element={<UserOrder />} />
+
     <Route path="/reviews" element={<Review1 />} />
     <Route path="/login-register" element={<Login />} />
     {/* <Route path='*'

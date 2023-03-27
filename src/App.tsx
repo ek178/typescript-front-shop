@@ -1,7 +1,9 @@
 import React, { useContext, useEffect,useState } from 'react';
 import { Outlet, Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from './app/hooks';
+import { Cart1 } from './features/Cart/Cart';
 import { StatusContext } from './features/Login/Status';
+import { Single1 } from './features/Single/Single';
 import { getSingleAsync1, selectSingle } from './features/Single/singleSlice';
 
 
@@ -32,6 +34,7 @@ function App() {
         <Link to="/home">Home</Link> || Wellcome {status ? (profile1?.name || '') : ''} |
         <br></br>
         {/* <Single1></Single1> */}
+        <Cart1></Cart1>
 
 
       </nav>

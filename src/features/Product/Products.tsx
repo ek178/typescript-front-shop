@@ -6,7 +6,7 @@ import { MY_SERVER } from '../../env';
 import { getProductAsync, selectProducts, addProductAsync, delProductAsync, updProductAsync } from './prodSlice';
 import { Product } from '../../models/Product';
 import { getSingleAsync1, selectSingle } from '../Single/singleSlice';
-import { StatusContext } from '../Login/Status';
+import { CartContext, StatusContext } from '../Login/Status';
 import { Link } from 'react-router-dom';
 
 // const filteredProducts = allProducts.filter(product => product.type === 'desiredType');
@@ -26,6 +26,9 @@ export const Product1 = () => {
     // const [status, setStatus] = useState<string | null>(null);
     const { status, setStatus } = useContext(StatusContext);
 
+    const { addToCart } = useContext(CartContext);
+    const [quantity, setQuantity] = useState(1);
+
     const [errorm, setErrorMsg] = useState("");
 
 
@@ -43,6 +46,11 @@ export const Product1 = () => {
 
         }
     }, [dispatch, status]);
+
+    const handleBuy = () => {
+        addToCart({ product: p_name, price: p_price, quantity });
+        setQuantity(1);
+    };
 
 
 
@@ -148,9 +156,14 @@ export const Product1 = () => {
                 <h1>Products in my class: {products.length}</h1>
                 {products && products.map((pro, i) => (
                     <div key={i}>
-                        ID: {pro?.id}, 
+                        ID: {pro?.id},
                         <br></br>
                         Name: {pro?.p_name}
+                        <br></br>
+                        <input type="number" value={quantity}
+                            onChange={(e) => setQuantity(parseInt(e.target.value))} />
+                        <br></br>
+                        <button onClick={handleBuy}>Add to Cart</button>
                         <br></br>
                         image: <img src={getImageUrl(pro?.p_image)} alt={pro?.p_name} width="200" height="200" />
                         <br></br>
